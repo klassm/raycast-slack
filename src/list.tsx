@@ -1,5 +1,5 @@
-import { Action, ActionPanel, Icon, List } from "@raycast/api";
-import { sortBy, sum } from "lodash";
+import { Action, ActionPanel, Cache, Icon, List } from "@raycast/api";
+import { countBy, keyBy, sortBy, sum, takeRight } from "lodash";
 import { useEffect, useState } from "react";
 import replaceSpecialCharacters from "replace-special-characters"
 import { provideAlfredSlackJson } from "./alfredSlackJson";
@@ -9,9 +9,36 @@ type SearchableData = SlackChannel & {
   team: string;
 }
 
+const cache = new Cache();
+const lastUsedCacheKey = "slack-last-used";
+
+function getLastUsedCache(): string[] {
+  return JSON.parse(cache.get(lastUsedCacheKey) ?? "[]");
+}
+
+function getMostUsed() {
+  const values = getLastUsedCache();
+  const countEntries = Object.entries(countBy(values));
+  const sortedEntries = sortBy(countEntries, (entry) => entry[1])
+    .reverse()
+    .map(([href]) => href);
+  return sortedEntries.slice(0, 20);
+}
+
+async function updateLastUsed(id: string) {
+  const cachedEntries = getLastUsedCache();
+  const newEntries = [...cachedEntries, id];
+  const latestEntries = takeRight(newEntries, 100);
+
+  cache.set(lastUsedCacheKey, JSON.stringify(latestEntries));
+}
+
 const useData = () => {
   const [data, setData] = useState<SearchableData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchableData[]>([]);
+
   useEffect(() => {
     setLoading(true);
     provideAlfredSlackJson()
@@ -23,7 +50,23 @@ const useData = () => {
       });
   }, []);
 
-  return { data, loading };
+
+  useEffect(() => {
+    if (searchText) {
+      const results = search(searchText, data)
+      setSearchResults(results);
+    } else {
+      const mostUsed = getMostUsed();
+      const byUrl = keyBy(data, (entry) => entry.id);
+      const filtered = mostUsed
+        .map((href) => byUrl[href])
+        .filter((entry): entry is SearchableData => !!entry);
+      setSearchResults(filtered);
+    }
+  }, [searchText, data]);
+
+
+  return { searchResults, setSearchText, loading };
 }
 
 const normalize = (value: string): string => {
@@ -59,23 +102,14 @@ const search = (query: string, data: SearchableData[]): SearchableData[] => {
 }
 
 export default function SlackList() {
-  const { data, loading } = useData()
-  const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchableData[]>([]);
-
-  useEffect(() => {
-    const results = search(searchText, data)
-    setSearchResults(results);
-  }, [searchText]);
+  const { searchResults, setSearchText, loading } = useData()
 
   return (
-    <List isLoading={ loading } enableFiltering={ false } searchText={ searchText }
+    <List isLoading={ loading } enableFiltering={ false }
           onSearchTextChange={ setSearchText } searchBarPlaceholder="Search Slack..." throttle>
-      <List.Section title="Results">
-        { ( searchResults ?? [] ).map((entry) => (
-          <SlackItem key={ entry.id } channel={ entry }/>
-        )) }
-      </List.Section>
+      { ( searchResults ?? [] ).map((entry) => (
+        <SlackItem key={ entry.id } channel={ entry }/>
+      )) }
     </List>
   );
 }
@@ -83,7 +117,7 @@ export default function SlackList() {
 
 function SlackItem({ channel }: { channel: SearchableData }) {
   const icon = channel.name.startsWith("#") ? { source: Icon.Hashtag } : { source: Icon.Person };
-  const url = `slack://channel?team=${channel.teamId}&id=${channel.id}`;
+  const url = `slack://channel?team=${ channel.teamId }&id=${ channel.id }`;
   return (
     <List.Item
       title={ channel.name }
@@ -92,7 +126,7 @@ function SlackItem({ channel }: { channel: SearchableData }) {
       actions={ (
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser title="Open" url={ url }/>
+            <Action.OpenInBrowser onOpen={ () => updateLastUsed(channel.id) } title="Open" url={ url }/>
           </ActionPanel.Section>
         </ActionPanel>
       ) }
