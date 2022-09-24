@@ -9,11 +9,9 @@ import { provideAlfredSlackJson, writeAlfredSlackJson } from "../alfredSlackJson
 // Dev Console > Application > Local Storage > localConfig_v2
 // Make sure to still be logged in to Slack when you test the API methods - this only works while you
 // are still logged in to Slack.
-const listResponse = JSON.parse(fs.readFileSync(__dirname + "/../../list-response.json").toString('utf-8'));
 
 config();
 
-const json = provideAlfredSlackJson();
 
 interface ChannelsResponse {
   channels: {
@@ -67,12 +65,18 @@ function getValuesToMap(response: unknown): SlackChannel[] {
   throw new Error("Don't know how to handle this response");
 }
 
-const groupedByTeams = groupBy(getValuesToMap(listResponse), (result) => result.teamId);
+async function merge() {
+  const json = await provideAlfredSlackJson();
+  const listResponse = JSON.parse(fs.readFileSync(__dirname + "/../../list-response.json").toString('utf-8'));
+  const groupedByTeams = groupBy(getValuesToMap(listResponse), (result) => result.teamId);
 
-const result = json.map((team) => ( {
-  ...team,
-  channels: mergeChannels(team.channels, groupedByTeams[team.teamId] || [])
-} ))
+  const result = json.map((team) => ( {
+    ...team,
+    channels: mergeChannels(team.channels, groupedByTeams[team.teamId] || [])
+  } ))
 
-console.log(JSON.stringify(result));
-writeAlfredSlackJson(result);
+  console.log(JSON.stringify(result));
+  writeAlfredSlackJson(result);
+}
+
+void merge();
