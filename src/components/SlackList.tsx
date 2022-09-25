@@ -1,9 +1,10 @@
-import { Action, ActionPanel, Icon, List } from "@raycast/api";
+import { Action, ActionPanel, Icon, List, useNavigation } from "@raycast/api";
 import { groupBy, sortBy } from "lodash";
 import { useMemo } from "react";
 import { useSearch } from "../hooks/useSearch";
 import { SlackChannel } from "../types/SlackChannel";
 import { TeamInfo } from "../types/TeamInfo";
+import { ChannelBookmarks } from "./ChannelBookmarks";
 
 export function SlackList() {
   const { searchResults, loading, setQuery, addMostUsed, teams } = useSearch();
@@ -19,7 +20,7 @@ export function SlackList() {
     return (
       <List.Section title={team.name} key={team.id}>
         {results.map((result) => (
-          <SlackItem key={result.id} channel={result} addMostUsed={() => addMostUsed(result)} />
+          <SlackItem key={result.id} channel={result} team={team} addMostUsed={() => addMostUsed(result)} />
         ))}
       </List.Section>
     );
@@ -45,9 +46,10 @@ function iconFor(channel: SlackChannel) {
   return { source: channel.icon };
 }
 
-function SlackItem({ channel, addMostUsed }: { channel: SlackChannel; addMostUsed: () => void }) {
+function SlackItem({ channel, addMostUsed, team }: { channel: SlackChannel; team: TeamInfo; addMostUsed: () => void }) {
   const icon = iconFor(channel);
   const url = `slack://channel?team=${channel.teamId}&id=${channel.id}`;
+  const { push } = useNavigation();
   return (
     <List.Item
       title={channel.name}
@@ -56,6 +58,13 @@ function SlackItem({ channel, addMostUsed }: { channel: SlackChannel; addMostUse
         <ActionPanel>
           <ActionPanel.Section>
             <Action.OpenInBrowser onOpen={addMostUsed} title="Open" url={url} />
+            <Action
+              title="Bookmarks"
+              onAction={() => {
+                addMostUsed();
+                push(<ChannelBookmarks team={team} channel={channel} />);
+              }}
+            />
           </ActionPanel.Section>
         </ActionPanel>
       }
