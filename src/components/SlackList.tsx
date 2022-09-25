@@ -50,6 +50,16 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackChannel; team
   const icon = iconFor(channel);
   const url = `slack://channel?team=${channel.teamId}&id=${channel.id}`;
   const { push } = useNavigation();
+  const bookmarksAction =
+    channel.type === "channel" ? (
+      <Action
+        title="Bookmarks"
+        onAction={() => {
+          addMostUsed();
+          push(<ChannelBookmarks team={team} channel={channel} />);
+        }}
+      />
+    ) : null;
   return (
     <List.Item
       title={channel.name}
@@ -58,13 +68,7 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackChannel; team
         <ActionPanel>
           <ActionPanel.Section>
             <Action.OpenInBrowser onOpen={addMostUsed} title="Open" url={url} />
-            <Action
-              title="Bookmarks"
-              onAction={() => {
-                addMostUsed();
-                push(<ChannelBookmarks team={team} channel={channel} />);
-              }}
-            />
+            {bookmarksAction}
           </ActionPanel.Section>
         </ActionPanel>
       }
