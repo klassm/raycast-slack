@@ -40,6 +40,7 @@ function Bookmark({ bookmark }: { bookmark: ChannelBookmark }) {
         <ActionPanel>
           <ActionPanel.Section>
             <Action.OpenInBrowser title="Open" url={bookmark.link} />
+            <Action.CopyToClipboard title="Copy" content={bookmark.link} />
           </ActionPanel.Section>
         </ActionPanel>
       }
