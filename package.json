@@ -14,10 +14,29 @@
       "mode": "view"
     }
   ],
+  "preferences": [
+    {
+      "name": "tokens",
+      "type": "textfield",
+      "title": "Slack Tokens",
+      "required": true,
+      "default": "",
+      "description": "Slack tokens"
+    },
+    {
+      "name": "cookie",
+      "type": "textfield",
+      "title": "Slack Cookie",
+      "required": true,
+      "default": "",
+      "description": "Slack Cookie"
+    }
+  ],
   "dependencies": {
     "@raycast/api": "^1.39.3",
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
+    "node-fetch": "^3.2.10",
     "replace-special-characters": "^1.2.6"
   },
   "devDependencies": {

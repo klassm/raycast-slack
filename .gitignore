@@ -10,3 +10,6 @@ list_response.json
 .idea
 *.iml
 *.js
+.env
+
+slack-api.http
