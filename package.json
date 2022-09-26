@@ -54,7 +54,6 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "publish": "ray publish",
-    "mergeAlfredSlackJsonWithSlackListFromApiTester": "ts-node ./src/scripts/mergeAlfredSlackJsonWithSlackListFromApiTester.ts"
+    "publish": "ray publish"
   }
 }
