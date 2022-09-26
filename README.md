@@ -2,7 +2,7 @@
 
 Extension to open Slack channels and users. You can also list the bookmarks of a Slack channel.
 
-Installation: Clone this repository and run `npm run dev`
+Installation: Clone this repository and run `npm install && npm run dev`
 
 The plugin uses [Slack Deep Linking](https://api.slack.com/reference/deep-linking#open_a_channel).
 
