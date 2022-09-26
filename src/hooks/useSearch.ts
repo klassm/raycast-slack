@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { search } from "../slack/search";
-import { SlackChannel } from "../types/SlackChannel";
+import { SlackEntry } from "../types/SlackEntry";
 import { useConfig } from "./useConfig";
 import { useMostUsed } from "./useMostUsed";
 import { useTeams } from "./useTeams";
@@ -10,7 +10,7 @@ export function useSearch() {
   const {
     config: { cookie },
   } = useConfig();
-  const [searchResults, setSearchResults] = useState<SlackChannel[]>([]);
+  const [searchResults, setSearchResults] = useState<SlackEntry[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const { mostUsed, add: addMostUsed } = useMostUsed();

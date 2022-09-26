@@ -1,6 +1,6 @@
-import { Credentials } from "../types/Credentials";
-import { SlackChannel } from "../types/SlackChannel";
 import fetch from "node-fetch";
+import { Credentials } from "../types/Credentials";
+import { SlackEntry } from "../types/SlackEntry";
 
 interface ChannelResponseEntry {
   id: string;
@@ -20,7 +20,8 @@ interface UserResponseEntry {
   team_id: string;
   deleted: boolean;
   profile: {
-    email: string;
+    title?: string;
+    email?: string;
     image_original: string;
     real_name: string;
   };
@@ -46,7 +47,7 @@ function isSearchResponse<T>(value: unknown, entryVerifier: (entry: unknown) => 
   return response.ok !== undefined && Array.isArray(response.results) && response.results.every(entryVerifier);
 }
 
-async function searchChannels({ cookie, token }: Credentials, query: string): Promise<SlackChannel[]> {
+async function searchChannels({ cookie, token }: Credentials, query: string): Promise<SlackEntry[]> {
   const response = await fetch("https://edgeapi.slack.com/cache/T0ATUH6S1/channels/search", {
     method: "POST",
     headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -76,7 +77,7 @@ async function searchChannels({ cookie, token }: Credentials, query: string): Pr
     );
 }
 
-async function searchUsers({ cookie, token }: Credentials, query: string): Promise<SlackChannel[]> {
+async function searchUsers({ cookie, token }: Credentials, query: string): Promise<SlackEntry[]> {
   const response = await fetch("https://edgeapi.slack.com/cache/T0ATUH6S1/users/search", {
     method: "POST",
     headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -104,12 +105,14 @@ async function searchUsers({ cookie, token }: Credentials, query: string): Promi
           id: result.id,
           teamId: result.team_id,
           icon: result.profile.image_original,
+          email: result.profile.email,
+          title: result.profile.title,
           type: "user",
         } as const)
     );
 }
 
-export async function search(credentials: Credentials, query: string): Promise<SlackChannel[]> {
+export async function search(credentials: Credentials, query: string): Promise<SlackEntry[]> {
   const results = await Promise.all([searchUsers(credentials, query), searchChannels(credentials, query)]);
   return results.flat();
 }

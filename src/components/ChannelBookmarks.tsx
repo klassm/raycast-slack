@@ -3,12 +3,12 @@ import { sortBy } from "lodash";
 import { useMemo } from "react";
 import { useBookmarks } from "../hooks/useBookmarks";
 import { ChannelBookmark } from "../types/ChannelBookmark";
-import { SlackChannel } from "../types/SlackChannel";
+import { SlackEntry } from "../types/SlackEntry";
 import { TeamInfo } from "../types/TeamInfo";
 
 interface ChannelBookmarksProps {
   team: TeamInfo;
-  channel: SlackChannel;
+  channel: SlackEntry;
 }
 
 export function ChannelBookmarks({ channel, team }: ChannelBookmarksProps) {

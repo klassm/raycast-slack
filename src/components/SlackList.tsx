@@ -2,7 +2,7 @@ import { Action, ActionPanel, Icon, List, useNavigation } from "@raycast/api";
 import { groupBy, sortBy } from "lodash";
 import { useMemo } from "react";
 import { useSearch } from "../hooks/useSearch";
-import { SlackChannel } from "../types/SlackChannel";
+import { SlackEntry } from "../types/SlackEntry";
 import { TeamInfo } from "../types/TeamInfo";
 import { ChannelBookmarks } from "./ChannelBookmarks";
 
@@ -16,7 +16,7 @@ export function SlackList() {
     return sortBy(teamResults, ([team]) => team.name);
   }, [teams, searchResults]);
 
-  const renderGroup = (team: TeamInfo, results: SlackChannel[]) => {
+  const renderGroup = (team: TeamInfo, results: SlackEntry[]) => {
     return (
       <List.Section title={team.name} key={team.id}>
         {results.map((result) => (
@@ -39,16 +39,18 @@ export function SlackList() {
   );
 }
 
-function iconFor(channel: SlackChannel) {
+function iconFor(channel: SlackEntry) {
   if (channel.icon === undefined) {
     return channel.type === "channel" ? { source: Icon.Hashtag } : { source: Icon.Person };
   }
   return { source: channel.icon };
 }
 
-function SlackItem({ channel, addMostUsed, team }: { channel: SlackChannel; team: TeamInfo; addMostUsed: () => void }) {
+function SlackItem({ channel, addMostUsed, team }: { channel: SlackEntry; team: TeamInfo; addMostUsed: () => void }) {
   const icon = iconFor(channel);
   const url = `slack://channel?team=${channel.teamId}&id=${channel.id}`;
+  const accessories = channel.type === "user" ? [{ text: channel.title }] : [];
+
   const { push } = useNavigation();
   const bookmarksAction =
     channel.type === "channel" ? (
@@ -60,15 +62,21 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackChannel; team
         }}
       />
     ) : null;
+  const emailAction =
+    channel.type === "user" && channel.email !== undefined ? (
+      <Action.OpenInBrowser url={`mailto:${channel.email}`} title="Send Mail" onOpen={addMostUsed} />
+    ) : null;
   return (
     <List.Item
       title={channel.name}
+      accessories={accessories}
       icon={icon}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
             <Action.OpenInBrowser onOpen={addMostUsed} title="Open" url={url} />
             {bookmarksAction}
+            {emailAction}
           </ActionPanel.Section>
         </ActionPanel>
       }
