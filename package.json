@@ -9,8 +9,8 @@
   "commands": [
     {
       "name": "list",
-      "title": "Slack",
-      "description": "",
+      "title": "Search Slack",
+      "description": "Search Slack channels and users",
       "mode": "view"
     }
   ],
