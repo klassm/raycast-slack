@@ -60,8 +60,8 @@ async function searchChannels({ cookie, token }: Credentials, query: string): Pr
   });
   const result = await response.json();
   if (!isSearchResponse<ChannelResponseEntry>(result, isChannelResponseEntry)) {
-    console.log("Weird response from Slack", result);
-    throw new Error("Got a weird response from Slack");
+    console.log("Weird response from Slack", result, response.status);
+    throw new Error(`Got a weird search channels response from Slack: ${response.status} ${response.statusText}`);
   }
 
   return result.results
@@ -92,8 +92,8 @@ async function searchUsers({ cookie, token }: Credentials, query: string): Promi
   });
   const result = await response.json();
   if (!isSearchResponse<UserResponseEntry>(result, isUserResponseEntry)) {
-    console.log("Weird response from Slack", result);
-    throw new Error("Got a weird response from Slack");
+    console.log("Weird search users response from Slack", result, response.status);
+    throw new Error(`Got a weird search users response from Slack: ${response.status} ${response.statusText}`);
   }
 
   return result.results

@@ -4,6 +4,7 @@ interface BaseEntry {
   id: string;
   icon?: string;
   type: ChannelType;
+  email?: string;
 }
 
 export interface SlackChannel extends BaseEntry {
@@ -12,7 +13,6 @@ export interface SlackChannel extends BaseEntry {
 
 export interface SlackUser extends BaseEntry {
   type: "user";
-  email?: string;
   title?: string;
 }
 

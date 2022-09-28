@@ -63,7 +63,7 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackEntry; team: 
       />
     ) : null;
   const emailAction =
-    channel.type === "user" && channel.email !== undefined ? (
+    channel.email !== undefined ? (
       <Action.OpenInBrowser url={`mailto:${channel.email}`} title="Send Mail" onOpen={addMostUsed} />
     ) : null;
   return (

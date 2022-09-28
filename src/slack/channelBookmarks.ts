@@ -38,8 +38,8 @@ export async function channelsBookmarks({ cookie, token }: Credentials, channelI
 
   const result = await response.json();
   if (!isBookmarksResponse(result)) {
-    console.log("Weird bookmarks response from Slack", result);
-    throw new Error("Got a weird bookmarks response from Slack");
+    console.log("Weird bookmarks response from Slack", result, response.status);
+    throw new Error(`Got a weird bookmarks response from Slack: ${response.status} ${response.statusText}`);
   }
 
   return result.bookmarks

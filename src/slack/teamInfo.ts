@@ -32,8 +32,8 @@ export async function teamInfo({ cookie, token }: Credentials): Promise<TeamInfo
 
   const result = await response.json();
   if (!isTeamInfoResponse(result)) {
-    console.log("Weird team info response from Slack", result);
-    throw new Error("Got a weird team info response from Slack");
+    console.log("Weird team info response from Slack", result, response.status);
+    throw new Error(`Got a weird team info response from Slack: ${response.status} ${response.statusText}`);
   }
 
   return {
