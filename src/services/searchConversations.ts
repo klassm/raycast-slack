@@ -1,11 +1,12 @@
 import { sortBy, sum, uniq } from "lodash";
 import replaceSpecialCharacters from "replace-special-characters";
-import { Credentials } from "../types/Credentials";
-import { SlackEntry } from "../types/SlackEntry";
-import { getCachedData } from "../utils/cache";
 import { ConversationChannel, loadConversations } from "../slack/conversations";
 import { Identity, loadIdentityCached } from "../slack/identity";
 import { loadCachedUsers, User } from "../slack/users";
+import { Credentials } from "../types/Credentials";
+import { SlackEntry } from "../types/SlackEntry";
+import { getCachedData } from "../utils/cache";
+import { userConversationToSlackEntry } from "../utils/userConversationToSlackEntry";
 
 interface ConversationWithUsers extends ConversationChannel {
   users: User[];
@@ -38,22 +39,7 @@ function search(query: string, data: ConversationWithUsers[]): ConversationWithU
 }
 
 function toSlackEntry(conversation: ConversationWithUsers, identity: Identity): SlackEntry {
-  const otherUsers = conversation.users.filter((user) => user.name !== identity.name);
-  const name = otherUsers
-    .map((user) => user.name)
-    .sort()
-    .join(", ");
-  const email = otherUsers
-    .map((user) => user.email)
-    .filter((email) => email !== undefined)
-    .join(";");
-  return {
-    email,
-    id: conversation.id,
-    name,
-    teamId: conversation.context_team_id,
-    type: "channel",
-  };
+  return userConversationToSlackEntry({ ...conversation, teamId: conversation.context_team_id, identity})
 }
 
 async function enrichWithUsers(
