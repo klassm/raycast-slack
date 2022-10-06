@@ -23,11 +23,11 @@ interface ConversationInfoResponse {
   ok: boolean;
   channel: {
     id: string;
-    members?: string[]
+    members?: string[];
     user?: string;
     name?: string;
     context_team_id: string;
-  }
+  };
 }
 
 function isConversationInfoResponse(response: unknown): response is ConversationInfoResponse {
@@ -51,10 +51,13 @@ async function loadConversation({ cookie, token }: Credentials, channel: string)
     id: json.channel.id,
     users: json.channel.members ?? compact([json.channel.user]),
     name: json.channel.name,
-    teamId: json.channel.context_team_id
+    teamId: json.channel.context_team_id,
   } as Conversation;
 }
 
-export async function loadConversationInfos(credentials: Credentials, conversationIds: string[]): Promise<Conversation[]> {
+export async function loadConversationInfos(
+  credentials: Credentials,
+  conversationIds: string[]
+): Promise<Conversation[]> {
   return Promise.all(conversationIds.map(async (userId) => loadConversation(credentials, userId)));
 }

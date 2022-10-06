@@ -11,13 +11,13 @@ export interface Message {
     thumb_tiny: string;
   }[];
   attachments?: {
-    fallback: string
-  }[]
+    fallback: string;
+  }[];
 }
 
 interface ConversationInfoResponse {
   ok: boolean;
-  messages: Message[]
+  messages: Message[];
 }
 
 function isConversationHistoryResponse(response: unknown): response is ConversationInfoResponse {
@@ -25,20 +25,20 @@ function isConversationHistoryResponse(response: unknown): response is Conversat
   return casted.ok && Array.isArray(casted.messages);
 }
 
-export async function loadConversationHistory({
-                                         cookie,
-                                         token
-                                       }: Credentials, {id, lastRead}: SlackEntryWithUnread): Promise<Message[]> {
-  const url = `https://slack.com/api/conversations.history?channel=${ id }&oldest=${ lastRead }&limit=10&inclusive=false`;
+export async function loadConversationHistory(
+  { cookie, token }: Credentials,
+  { id, lastRead }: SlackEntryWithUnread
+): Promise<Message[]> {
+  const url = `https://slack.com/api/conversations.history?channel=${id}&oldest=${lastRead}&limit=10&inclusive=false`;
   const response = await fetch(url, {
     method: "GET",
-    headers: { Cookie: cookie, Authorization: `Bearer ${ token }` },
+    headers: { Cookie: cookie, Authorization: `Bearer ${token}` },
   });
 
   const json = await response.json();
   if (!isConversationHistoryResponse(json)) {
     console.log("Got a weird conversation history response from Slack", json, response.status);
-    throw new Error(`Got a weird conversation history response from Slack: ${ response.status } ${ response.statusText }`);
+    throw new Error(`Got a weird conversation history response from Slack: ${response.status} ${response.statusText}`);
   }
   return json.messages;
 }

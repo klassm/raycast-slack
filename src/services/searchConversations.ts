@@ -39,7 +39,7 @@ function search(query: string, data: ConversationWithUsers[]): ConversationWithU
 }
 
 function toSlackEntry(conversation: ConversationWithUsers, identity: Identity): SlackEntry {
-  return userConversationToSlackEntry({ ...conversation, teamId: conversation.context_team_id, identity})
+  return userConversationToSlackEntry({ ...conversation, teamId: conversation.context_team_id, identity });
 }
 
 async function enrichWithUsers(

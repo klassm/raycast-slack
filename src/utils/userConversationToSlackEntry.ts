@@ -2,14 +2,19 @@ import { Identity } from "../slack/identity";
 import { User } from "../slack/users";
 import { SlackEntry } from "../types/SlackEntry";
 
-interface ConversationToSlackEntryProps { id: string, users: User[], teamId: string, identity: Identity }
+interface ConversationToSlackEntryProps {
+  id: string;
+  users: User[];
+  teamId: string;
+  identity: Identity;
+}
 
 export function userConversationToSlackEntry({
-                                           id,
-                                           users,
-                                           teamId,
-                                           identity
-                                         }: ConversationToSlackEntryProps): SlackEntry {
+  id,
+  users,
+  teamId,
+  identity,
+}: ConversationToSlackEntryProps): SlackEntry {
   const otherUsers = users.filter((user) => user.name !== identity.name);
   const name = otherUsers
     .map((user) => user.name)
@@ -24,6 +29,6 @@ export function userConversationToSlackEntry({
     id: id,
     name,
     teamId: teamId,
-    type: users.length === 1 ? "user": "channel",
+    type: users.length === 1 ? "user" : "channel",
   };
 }
