@@ -8,9 +8,15 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "list",
+      "name": "searchSlack",
       "title": "Search Slack",
       "description": "Search Slack channels and users",
+      "mode": "view"
+    },
+    {
+      "name": "unreadSlackConversations",
+      "title": "Unread Slack conversations",
+      "description": "Show unread slack conversations",
       "mode": "view"
     }
   ],
@@ -37,7 +43,8 @@
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
     "node-fetch": "^3.2.10",
-    "replace-special-characters": "^1.2.6"
+    "replace-special-characters": "^1.2.6",
+    "usehooks-ts": "^2.6.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.185",

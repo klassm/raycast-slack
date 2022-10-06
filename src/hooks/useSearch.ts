@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { search } from "../slack/search";
-import { searchConversations } from "../slack/searchConversations";
+import { searchConversations } from "../services/searchConversations";
 import { Credentials } from "../types/Credentials";
 import { SlackEntry } from "../types/SlackEntry";
 import { TeamInfo } from "../types/TeamInfo";

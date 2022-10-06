@@ -1,4 +1,4 @@
-import { keyBy, pickBy } from "lodash";
+import { compact, keyBy, pickBy } from "lodash";
 import fetch from "node-fetch";
 import replaceSpecialCharacters from "replace-special-characters";
 import { Credentials } from "../types/Credentials";
@@ -65,7 +65,7 @@ export async function loadCachedUsers(credentials: Credentials, teamId: string, 
 
   const foundUsers = pickBy(cached, (value) => userIds.includes(value.id));
 
-  const missingUsers = userIds.filter((id) => cached[id] === undefined);
+  const missingUsers = compact(userIds.filter((id) => cached[id] === undefined));
   if (missingUsers.length === 0) {
     return foundUsers;
   }

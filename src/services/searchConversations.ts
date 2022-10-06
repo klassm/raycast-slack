@@ -3,9 +3,9 @@ import replaceSpecialCharacters from "replace-special-characters";
 import { Credentials } from "../types/Credentials";
 import { SlackEntry } from "../types/SlackEntry";
 import { getCachedData } from "../utils/cache";
-import { ConversationChannel, loadConversations } from "./conversations";
-import { Identity, loadIdentityCached } from "./identity";
-import { loadCachedUsers, User } from "./users";
+import { ConversationChannel, loadConversations } from "../slack/conversations";
+import { Identity, loadIdentityCached } from "../slack/identity";
+import { loadCachedUsers, User } from "../slack/users";
 
 interface ConversationWithUsers extends ConversationChannel {
   users: User[];
