@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { SlackEntryWithUnread } from "../hooks/useClientCounts";
 import { Credentials } from "../types/Credentials";
 
 export interface Message {
@@ -27,8 +28,8 @@ function isConversationHistoryResponse(response: unknown): response is Conversat
 export async function loadConversationHistory({
                                          cookie,
                                          token
-                                       }: Credentials, conversation: string, latest: string): Promise<Message[]> {
-  const url = `https://slack.com/api/conversations.history?channel=${ conversation }&oldest=${ latest }&limit=5&inclusive=true`;
+                                       }: Credentials, {id, lastRead}: SlackEntryWithUnread): Promise<Message[]> {
+  const url = `https://slack.com/api/conversations.history?channel=${ id }&oldest=${ lastRead }&limit=10&inclusive=false`;
   const response = await fetch(url, {
     method: "GET",
     headers: { Cookie: cookie, Authorization: `Bearer ${ token }` },

@@ -10,7 +10,7 @@ import { useConfig } from "./useConfig";
 export type MessageWithUser = Omit<Message, "user"> & {user?: User};
 
 async function loadMessages(credentials: Credentials, conversation: SlackEntryWithUnread): Promise<MessageWithUser[]> {
-  const messages = await loadConversationHistory(credentials, conversation.id, conversation.lastRead)
+  const messages = await loadConversationHistory(credentials, conversation)
   const userIds = compact(uniq(messages.map(message => message.user)));
   const userCache = await loadCachedUsers(credentials, conversation.teamId, userIds);
   return messages.map(message => ({...message, user: message.user ? userCache[message.user] : undefined}));
