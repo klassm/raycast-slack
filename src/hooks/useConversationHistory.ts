@@ -11,9 +11,10 @@ export type MessageWithUser = Omit<Message, "user"> & { user?: User };
 
 async function loadMessages(credentials: Credentials, conversation: SlackEntryWithUnread): Promise<MessageWithUser[]> {
   const messages = await loadConversationHistory(credentials, conversation);
-  const userIds = compact(uniq(messages.map((message) => message.user)));
+  const relevantMessages = messages.filter((message) => message.type === "message" && message.subtype === undefined);
+  const userIds = compact(uniq(relevantMessages.map((message) => message.user)));
   const userCache = await loadCachedUsers(credentials, conversation.teamId, userIds);
-  return messages.map((message) => ({ ...message, user: message.user ? userCache[message.user] : undefined }));
+  return relevantMessages.map((message) => ({ ...message, user: message.user ? userCache[message.user] : undefined }));
 }
 
 export function useConversationHistory(team: TeamInfo, conversation: SlackEntryWithUnread) {
