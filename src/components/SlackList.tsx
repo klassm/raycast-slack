@@ -66,6 +66,8 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackEntry; team: 
     channel.email !== undefined ? (
       <Action.OpenInBrowser url={`mailto:${channel.email}`} title="Send Mail" onOpen={addMostUsed} />
     ) : null;
+  const copyEmailAction =
+    channel.email !== undefined ? <Action.CopyToClipboard content={channel.email} title="Copy Mail" /> : null;
   return (
     <List.Item
       title={channel.name}
@@ -77,6 +79,7 @@ function SlackItem({ channel, addMostUsed, team }: { channel: SlackEntry; team: 
             <Action.OpenInBrowser onOpen={addMostUsed} title="Open" url={url} />
             {bookmarksAction}
             {emailAction}
+            {copyEmailAction}
           </ActionPanel.Section>
         </ActionPanel>
       }

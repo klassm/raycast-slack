@@ -40,6 +40,6 @@ async function loadPaged({ cookie, token }: Credentials, cursor?: string): Promi
   return [...json.channels, ...pageData];
 }
 
-export async function loadConversations(credentials: Credentials) {
+export async function loadConversations(credentials: Credentials): Promise<ConversationChannel[]> {
   return loadPaged(credentials);
 }
