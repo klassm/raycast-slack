@@ -8,6 +8,7 @@ import { isUserConversation } from "../slack/conversationInfo";
 import { conversationMark } from "../slack/conversationMark";
 import { loadIdentityCached } from "../slack/identity";
 import { loadCachedUsers } from "../slack/users";
+import { getCachedUsersPrefs } from "../slack/usersPrefs";
 import { Credentials } from "../types/Credentials";
 import { SlackEntry } from "../types/SlackEntry";
 import { userConversationToSlackEntry } from "../utils/userConversationToSlackEntry";
@@ -59,8 +60,10 @@ async function toSlackEntry(
 }
 
 async function loadData(credentials: Credentials, teamId: string): Promise<SlackEntryWithUnread[]> {
-  const counts = await clientCounts(credentials);
-  const unreadEntries = [...counts.ims, ...counts.mpims, ...counts.channels].filter((it) => it.hasUnread);
+  const [counts, usersPrefs] = await Promise.all([clientCounts(credentials), getCachedUsersPrefs(credentials, teamId)]);
+  const unreadEntries = [...counts.ims, ...counts.mpims, ...counts.channels]
+    .filter((it) => it.hasUnread)
+    .filter((it) => !usersPrefs.mutedChannels.includes(it.id));
   const slackEntries = await toSlackEntry(unreadEntries, credentials, teamId);
   return sortBy(slackEntries, (entry) => [entry.mentions, entry.latest]);
 }
@@ -68,6 +71,7 @@ async function loadData(credentials: Credentials, teamId: string): Promise<Slack
 export function useClientCounts() {
   const [loading, setLoading] = useState(false);
   const { teams, loading: teamLoading } = useTeams();
+
   const {
     config: { cookie },
   } = useConfig();
@@ -98,7 +102,11 @@ export function useClientCounts() {
   const update = async () => {
     try {
       setLoading(true);
-      const teamData = await Promise.all(teams.map((team) => loadData({ cookie, token: team.token }, team.id)));
+      const teamData = await Promise.all(
+        teams.map((team) => {
+          return loadData({ cookie, token: team.token }, team.id);
+        })
+      );
       setData(teamData.flat());
     } finally {
       setLoading(false);
