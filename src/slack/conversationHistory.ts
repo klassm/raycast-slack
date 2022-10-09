@@ -7,7 +7,7 @@ export interface Message {
   username?: string;
   text: string;
   ts: string;
-  subtype?: "channel_leave" | "channel_join";
+  subtype?: "channel_leave" | "channel_join" | "bot_message";
   type: string;
   files?: {
     thumb_tiny: string;

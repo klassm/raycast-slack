@@ -7,11 +7,15 @@ import { TeamInfo } from "../types/TeamInfo";
 import { SlackEntryWithUnread } from "./useClientCounts";
 import { useConfig } from "./useConfig";
 
+const blockedSubtypes = ["channel_leave", "channel_join"];
 export type MessageWithUser = Omit<Message, "user"> & { user?: User };
 
 async function loadMessages(credentials: Credentials, conversation: SlackEntryWithUnread): Promise<MessageWithUser[]> {
   const messages = await loadConversationHistory(credentials, conversation);
-  const relevantMessages = messages.filter((message) => message.type === "message" && message.subtype === undefined);
+  const relevantMessages = messages.filter(
+    (message) =>
+      message.type === "message" && (message.subtype === undefined || !blockedSubtypes.includes(message.subtype))
+  );
   const userIds = compact(uniq(relevantMessages.map((message) => message.user)));
   const userCache = await loadCachedUsers(credentials, conversation.teamId, userIds);
   return relevantMessages.map((message) => ({ ...message, user: message.user ? userCache[message.user] : undefined }));

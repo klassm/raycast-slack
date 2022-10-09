@@ -81,7 +81,9 @@ function messageToMarkdown(message: MessageWithUser): string {
   const date = new Date(parseFloat(message.ts) * 1000).toLocaleString();
   const header = "### " + (message.user?.name ?? message.username ?? "???") + " " + date;
   const files = message.files !== undefined && message.files.length > 0 ? "<Files>" : undefined;
-  const attachments = (message.attachments ?? []).map((attachment) => attachment.fallback);
+  const attachments = (message.attachments ?? [])
+    .map((attachment) => attachment.fallback)
+    .filter((fallback) => fallback !== message.text);
   const content = compact([message.text, files, ...attachments])
     .filter((it) => it)
     .join("\n");
