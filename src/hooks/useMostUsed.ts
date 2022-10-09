@@ -15,12 +15,12 @@ function getMostUsed(channels: SlackEntry[]): SlackEntry[] {
 
 function updateLastUsed(oldData: SlackEntry[], newEntry: SlackEntry): SlackEntry[] {
   const newEntries = [...oldData, newEntry];
-  return takeRight(newEntries, 100);
+  return takeRight(newEntries, 1000);
 }
 
 export function useMostUsed() {
   const { data, update } = useCache<SlackEntry[]>("slack-most-used", async () => [], {
-    expirationMillis: 1000 * 60 * 24 * 60,
+    expirationMillis: 1000 * 60 * 60 * 24 * 60 ,
   });
   const mostUsed = useMemo(() => getMostUsed(data ?? []), [data]);
 
