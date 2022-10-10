@@ -1,3 +1,4 @@
+import { keyBy } from "lodash";
 import fetch from "node-fetch";
 import { Credentials } from "../types/Credentials";
 
@@ -40,6 +41,7 @@ async function loadPaged({ cookie, token }: Credentials, cursor?: string): Promi
   return [...json.channels, ...pageData];
 }
 
-export async function loadConversations(credentials: Credentials): Promise<ConversationChannel[]> {
-  return loadPaged(credentials);
+export async function loadConversations(credentials: Credentials): Promise<{ [id: string]: ConversationChannel }> {
+  const data = await loadPaged(credentials);
+  return keyBy(data, (entry) => entry.id);
 }

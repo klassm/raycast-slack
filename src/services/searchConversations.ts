@@ -45,11 +45,11 @@ function toSlackEntry(conversation: ConversationWithUsers, identity: Identity): 
 async function enrichWithUsers(
   credentials: Credentials,
   teamId: string,
-  conversations: ConversationChannel[]
+  conversations: { [id: string]: ConversationChannel }
 ): Promise<ConversationWithUsers[]> {
-  const userIds = uniq(conversations.flatMap((conversation) => conversation.members));
+  const userIds = uniq(Object.values(conversations).flatMap((conversation) => conversation.members));
   const userCache = await loadCachedUsers(credentials, teamId, userIds);
-  return conversations.map((conversation) => {
+  return Object.values(conversations).map((conversation) => {
     return {
       ...conversation,
       users: conversation.members.map((member) => userCache[member]),
@@ -62,7 +62,7 @@ export async function searchConversations(
   teamId: string,
   query: string
 ): Promise<SlackEntry[]> {
-  const data = await getCachedData(`slack-conversations-${teamId}`, async () => loadConversations(credentials), {
+  const data = await getCachedData(`slack-conversations-object-${teamId}`, async () => loadConversations(credentials), {
     expirationMillis: 10 * 60000,
   });
 
