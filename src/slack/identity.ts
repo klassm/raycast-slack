@@ -15,7 +15,7 @@ interface IdentityResponse {
   };
 }
 
-function isUserResponse(response: unknown): response is IdentityResponse {
+function isIdentityResponse(response: unknown): response is IdentityResponse {
   const casted = response as IdentityResponse;
   return casted.ok && casted.profile?.real_name_normalized !== undefined;
 }
@@ -28,7 +28,7 @@ async function loadIdentity({ cookie, token }: Credentials): Promise<Identity> {
   });
 
   const json = await response.json();
-  if (!isUserResponse(json)) {
+  if (!isIdentityResponse(json)) {
     console.log("Got a weird identity response from Slack", json, response.status);
     throw new Error(`Got a weird identity response from Slack: ${response.status} ${response.statusText}`);
   }

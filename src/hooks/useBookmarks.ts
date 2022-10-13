@@ -1,5 +1,4 @@
-import { sortBy } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { channelsBookmarks } from "../slack/channelBookmarks";
 import { ChannelBookmark } from "../types/ChannelBookmark";
 import { SlackEntry } from "../types/SlackEntry";

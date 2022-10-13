@@ -1,6 +1,8 @@
 import { compact, uniq } from "lodash";
 import { useEffect, useState } from "react";
+import { messageContentToMarkdown } from "../services/messageContentToMarkdown";
 import { loadConversationHistory, Message } from "../slack/conversationHistory";
+import { loadEmojisCached } from "../slack/emojis";
 import { loadCachedUsers, User } from "../slack/users";
 import { Credentials } from "../types/Credentials";
 import { TeamInfo } from "../types/TeamInfo";
@@ -10,15 +12,27 @@ import { useConfig } from "./useConfig";
 const blockedSubtypes = ["channel_leave", "channel_join"];
 export type MessageWithUser = Omit<Message, "user"> & { user?: User };
 
-async function loadMessages(credentials: Credentials, conversation: SlackEntryWithUnread): Promise<MessageWithUser[]> {
-  const messages = await loadConversationHistory(credentials, conversation);
+async function loadMessages(
+  credentials: Credentials,
+  teamId: string,
+  conversation: SlackEntryWithUnread
+): Promise<MessageWithUser[]> {
+  const [messages, emojis] = await Promise.all([
+    loadConversationHistory(credentials, conversation),
+    loadEmojisCached(credentials, teamId),
+  ]);
   const relevantMessages = messages.filter(
     (message) =>
       message.type === "message" && (message.subtype === undefined || !blockedSubtypes.includes(message.subtype))
   );
+
   const userIds = compact(uniq(relevantMessages.map((message) => message.user)));
   const userCache = await loadCachedUsers(credentials, conversation.teamId, userIds);
-  return relevantMessages.map((message) => ({ ...message, user: message.user ? userCache[message.user] : undefined }));
+  return relevantMessages.map((message) => ({
+    ...message,
+    text: messageContentToMarkdown(message.text, emojis),
+    user: message.user ? userCache[message.user] : undefined,
+  }));
 }
 
 export function useConversationHistory(team: TeamInfo, conversation: SlackEntryWithUnread) {
@@ -35,6 +49,7 @@ export function useConversationHistory(team: TeamInfo, conversation: SlackEntryW
         token: team.token,
         cookie,
       },
+      team.id,
       conversation
     )
       .then(setData)
