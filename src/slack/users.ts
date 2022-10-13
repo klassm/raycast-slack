@@ -23,7 +23,7 @@ interface UserResponse {
   };
 }
 
-interface UserCache {
+export interface Users {
   [userId: string]: User;
 }
 
@@ -57,9 +57,9 @@ export async function loadUsers(credentials: Credentials, userIds: string[]): Pr
   return Promise.all(userIds.map(async (userId) => loadUser(credentials, userId)));
 }
 
-export async function loadCachedUsers(credentials: Credentials, teamId: string, userIds: string[]): Promise<UserCache> {
+export async function loadCachedUsers(credentials: Credentials, teamId: string, userIds: string[]): Promise<Users> {
   const cacheKey = `slack-users-${teamId}`;
-  const cached = await getCachedData<UserCache>(cacheKey, async () => ({}), {
+  const cached = await getCachedData<Users>(cacheKey, async () => ({}), {
     expirationMillis: 1000 * 60 * 60 * 24 * 10,
   });
 

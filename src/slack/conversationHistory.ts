@@ -10,7 +10,8 @@ export interface Message {
   subtype?: "channel_leave" | "channel_join" | "bot_message";
   type: string;
   files?: {
-    thumb_tiny: string;
+    thumb_360: string;
+    title: string;
   }[];
   attachments?: {
     fallback: string;

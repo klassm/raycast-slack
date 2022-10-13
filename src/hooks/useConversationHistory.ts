@@ -1,6 +1,6 @@
 import { compact, uniq } from "lodash";
 import { useEffect, useState } from "react";
-import { messageContentToMarkdown } from "../services/messageContentToMarkdown";
+import { extractUserIdsInText, messageContentToMarkdown } from "../services/messageContentToMarkdown";
 import { loadConversationHistory, Message } from "../slack/conversationHistory";
 import { loadEmojisCached } from "../slack/emojis";
 import { loadCachedUsers, User } from "../slack/users";
@@ -26,12 +26,14 @@ async function loadMessages(
       message.type === "message" && (message.subtype === undefined || !blockedSubtypes.includes(message.subtype))
   );
 
+  const messageUserIds = messages.flatMap((message) => extractUserIdsInText(message.text));
   const userIds = compact(uniq(relevantMessages.map((message) => message.user)));
-  const userCache = await loadCachedUsers(credentials, conversation.teamId, userIds);
+
+  const users = await loadCachedUsers(credentials, conversation.teamId, [...userIds, ...messageUserIds]);
   return relevantMessages.map((message) => ({
     ...message,
-    text: messageContentToMarkdown(message.text, emojis),
-    user: message.user ? userCache[message.user] : undefined,
+    text: messageContentToMarkdown(message.text, emojis, users),
+    user: message.user ? users[message.user] : undefined,
   }));
 }
 

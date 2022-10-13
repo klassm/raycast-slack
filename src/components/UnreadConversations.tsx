@@ -80,14 +80,15 @@ function ConversationItem({
 function messageToMarkdown(message: MessageWithUser): string {
   const date = new Date(parseFloat(message.ts) * 1000).toLocaleString();
   const header = "### " + (message.user?.name ?? message.username ?? "???") + " " + date;
-  const files = message.files !== undefined && message.files.length > 0 ? "<Files>" : undefined;
+  const files = message.files?.map((file) => `${file.title}`) ?? [];
   const attachments = (message.attachments ?? [])
     .map((attachment) => attachment.fallback)
     .filter((fallback) => fallback !== message.text);
-  const content = compact([message.text, files, ...attachments])
+
+  const additions = compact([...files, ...attachments])
     .filter((it) => it)
     .join("\n");
-  return header + "\n" + content;
+  return header + "\n" + message.text + "\n\n" + additions;
 }
 
 function ConversationDetail({ conversation, team }: { conversation: SlackEntryWithUnread; team: TeamInfo }) {
