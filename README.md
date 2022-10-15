@@ -1,10 +1,15 @@
 # Slack
 
-Extension to open Slack channels and users. You can also list the bookmarks of a Slack channel.
+## Features
 
-Installation: Clone this repository and run `npm install && npm run dev`
+* Open channels and users
+* List and open conversations with multiple users
+* Open bookmarks of slack channels
+* Show unread messages directly in Raycast, mark them as read with just one command
 
-The plugin uses [Slack Deep Linking](https://api.slack.com/reference/deep-linking#open_a_channel).
+## Installation
+
+Clone this repository and run `npm install && npm run dev`
 
 The app uses two kinds of information - tokens and a cookie.
 
@@ -18,7 +23,7 @@ All data can be obtained when opening Slack in the browser, logging in and openi
 ## Obtaining the parameters
 
 * Open Slack in your browser, log in
-* Open the dev console, then open the console tab
+* [Open the dev console](https://developer.chrome.com/docs/devtools/open/), then open the console tab
 * Execute the following snippets:
 
 ```
@@ -28,4 +33,6 @@ Object.values(JSON.parse(window.localStorage["localConfig_v2"]).teams).map(team 
 # Get the cookie
 document.cookie
 ```
+
+Copy the two values (without the quotes surrounding the output) and enter them to the respective fields in the Raycast extension options.
 
