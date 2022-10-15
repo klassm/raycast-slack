@@ -4,11 +4,13 @@ import { Users } from "../slack/users";
 
 const emojiRegexp = /:([\w_+]+):/g;
 const userIdRegexp = /<@([^>]+)>/g;
+const channelsRegexp = /<#[^|]+\|([^>]+)>/g;
 
 export function messageContentToMarkdown(message: string, emojis: Emojis, users: Users): string {
   const linksReplaced = message.replaceAll(/<(http[^|]+)\|([^>]+)>/g, "[$2]($1)");
   const emojisReplaced = replaceEmojis(linksReplaced, emojis);
-  return replaceUsers(emojisReplaced, users);
+  const usersReplaced = replaceUsers(emojisReplaced, users);
+  return replaceChannels(usersReplaced);
 }
 
 export function replaceEmojis(text: string, emojis: Emojis): string {
@@ -27,6 +29,10 @@ export function replaceUsers(text: string, users: Users): string {
     (cur, [key, value]) => cur.replaceAll(`<@${key}>`, `**@${value.name}**`),
     text
   );
+}
+
+export function replaceChannels(text: string): string {
+  return text.replaceAll(channelsRegexp, (_arg, arg1) => `**#${ arg1 }**`)
 }
 
 function extractEmojiInText(text: string) {
