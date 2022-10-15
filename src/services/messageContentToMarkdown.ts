@@ -4,13 +4,13 @@ import { Users } from "../slack/users";
 
 const emojiRegexp = /:([\w_+]+):/g;
 const userIdRegexp = /<@([^>]+)>/g;
-const channelsRegexp = /<#[^|]+\|([^>]+)>/g;
+const channelsRegexp = /<#([^|]+)\|([^>]+)>/g;
 
-export function messageContentToMarkdown(message: string, emojis: Emojis, users: Users): string {
+export function messageContentToMarkdown(message: string, emojis: Emojis, users: Users, teamId: string): string {
   const linksReplaced = message.replaceAll(/<(http[^|]+)\|([^>]+)>/g, "[$2]($1)");
   const emojisReplaced = replaceEmojis(linksReplaced, emojis);
-  const usersReplaced = replaceUsers(emojisReplaced, users);
-  return replaceChannels(usersReplaced);
+  const usersReplaced = replaceUsers(emojisReplaced, users, teamId);
+  return replaceChannels(teamId, usersReplaced);
 }
 
 export function replaceEmojis(text: string, emojis: Emojis): string {
@@ -22,17 +22,18 @@ export function replaceEmojis(text: string, emojis: Emojis): string {
   );
 }
 
-export function replaceUsers(text: string, users: Users): string {
-  const userIds = extractUserIdsInText(text);
-  const relevantUsers = pickBy(users, (_value, key) => userIds.includes(key));
-  return Object.entries(relevantUsers).reduce(
-    (cur, [key, value]) => cur.replaceAll(`<@${key}>`, `**@${value.name}**`),
-    text
-  );
+export function replaceUsers(text: string, users: Users, teamId: string): string {
+  return text.replaceAll(userIdRegexp, (_arg, id) => {
+    const url = `slack://channel?team=${teamId}&id=${id}`;
+    return `[@${users[id].name}](${url})`;
+  });
 }
 
-export function replaceChannels(text: string): string {
-  return text.replaceAll(channelsRegexp, (_arg, arg1) => `**#${ arg1 }**`)
+export function replaceChannels(teamId: string, text: string): string {
+  return text.replaceAll(channelsRegexp, (_arg, id, name) => {
+    const url = `slack://channel?team=${teamId}&id=${id}`;
+    return `[#${name}](${url})`;
+  });
 }
 
 function extractEmojiInText(text: string) {

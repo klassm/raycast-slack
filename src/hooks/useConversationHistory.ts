@@ -32,7 +32,7 @@ async function loadMessages(
   const users = await loadCachedUsers(credentials, conversation.teamId, [...userIds, ...messageUserIds]);
   return relevantMessages.map((message) => ({
     ...message,
-    text: messageContentToMarkdown(message.text, emojis, users),
+    text: messageContentToMarkdown(message.text, emojis, users, teamId),
     user: message.user ? users[message.user] : undefined,
   }));
 }
