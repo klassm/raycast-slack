@@ -35,7 +35,7 @@ async function toSlackEntry(
   );
   const userCache = await loadCachedUsers(credentials, teamId, userIds);
 
-  return sortBy(unreadEntries, (im) => `${im.mentions}_${im.latest}`).map((unreadEntry): SlackEntryWithUnread => {
+  return unreadEntries.map((unreadEntry): SlackEntryWithUnread => {
     const conversation = conversations[unreadEntry.id];
 
     if (isUserConversation(conversation)) {
@@ -65,7 +65,7 @@ async function loadData(credentials: Credentials, teamId: string): Promise<Slack
     .filter((it) => it.hasUnread)
     .filter((it) => !usersPrefs.mutedChannels.includes(it.id));
   const slackEntries = await toSlackEntry(unreadEntries, credentials, teamId);
-  return sortBy(slackEntries, (entry) => [entry.mentions, entry.latest]);
+  return sortBy(slackEntries, (entry) => [entry.mentions, entry.latest]).reverse();
 }
 
 export function useClientCounts() {
