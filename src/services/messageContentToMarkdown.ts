@@ -16,9 +16,7 @@ export function messageContentToMarkdown(message: string, emojis: Emojis, users:
 
 export function replaceEmojis(text: string, emojis: Emojis): string {
   const cleanedUp = cleanupEmojiText(text);
-  return cleanedUp.replaceAll(emojiRegexp, (_arg, id) => {
-    return `<img src="${emojis[id]}" alt="${id}" height="17"/>`;
-  });
+  return cleanedUp.replaceAll(emojiRegexp, (_arg, id) => `<img src="${emojis[id]}" alt="${id}" height="17"/>`);
 }
 
 export function replaceUsers(text: string, users: Users, teamId: string): string {
