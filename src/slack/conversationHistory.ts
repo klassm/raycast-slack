@@ -32,7 +32,17 @@ export async function loadConversationHistory(
   { cookie, token }: Credentials,
   { id, lastRead }: SlackEntryWithUnread
 ): Promise<Message[]> {
-  const url = `https://slack.com/api/conversations.history?channel=${id}&oldest=${lastRead}&limit=10&inclusive=false`;
+  const conversationQueryParams: Record<string, string> =
+    lastRead === "0000000000.000000"
+      ? {}
+      : {
+          oldest: `${lastRead}`,
+          inclusive: "false",
+        };
+  const queryParams = { ...conversationQueryParams, limit: "20", channel: id } as const;
+  const urlSearchParams = new URLSearchParams(queryParams);
+
+  const url = `https://slack.com/api/conversations.history?${urlSearchParams.toString()}`;
   const response = await fetch(url, {
     method: "GET",
     headers: { Cookie: cookie, Authorization: `Bearer ${token}` },
