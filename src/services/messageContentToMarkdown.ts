@@ -10,7 +10,8 @@ export function messageContentToMarkdown(message: string, emojis: Emojis, users:
   const linksReplaced = message.replaceAll(/<(http[^|]+)\|([^>]+)>/g, "[$2]($1)");
   const emojisReplaced = replaceEmojis(linksReplaced, emojis);
   const usersReplaced = replaceUsers(emojisReplaced, users, teamId);
-  return replaceChannels(teamId, usersReplaced);
+  const listReplaces = usersReplaced.replaceAll(/[•◦]/g, "*");
+  return replaceChannels(teamId, listReplaces);
 }
 
 export function replaceEmojis(text: string, emojis: Emojis): string {
