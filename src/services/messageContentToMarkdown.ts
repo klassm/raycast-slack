@@ -1,8 +1,8 @@
-import { pickBy } from "lodash";
 import { Emojis } from "../slack/emojis";
 import { Users } from "../slack/users";
 
-const emojiRegexp = /:([\w_+]+):/g;
+const emojiRegexp = /:([-\w_+]+):/g;
+const emojiSuffixRegexp = /(:[-\w_+]+:):[-\w_+]+:/g;
 const userIdRegexp = /<@([^>]+)>/g;
 const channelsRegexp = /<#([^|]+)\|([^>]+)>/g;
 
@@ -15,12 +15,10 @@ export function messageContentToMarkdown(message: string, emojis: Emojis, users:
 }
 
 export function replaceEmojis(text: string, emojis: Emojis): string {
-  const emojiKeys = extractEmojiInText(text);
-  const relevantEmojis = pickBy(emojis, (_value, key) => emojiKeys.includes(key));
-  return Object.entries(relevantEmojis).reduce(
-    (cur, [key, value]) => cur.replaceAll(`:${key}:`, `<img src="${value}" alt="${key}" height="15"/>`),
-    text
-  );
+  const cleanedUp = cleanupEmojiText(text);
+  return cleanedUp.replaceAll(emojiRegexp, (_arg, id) => {
+    return `<img src="${emojis[id]}" alt="${id}" height="17"/>`;
+  });
 }
 
 export function replaceUsers(text: string, users: Users, teamId: string): string {
@@ -37,15 +35,8 @@ export function replaceChannels(teamId: string, text: string): string {
   });
 }
 
-function extractEmojiInText(text: string) {
-  const foundEmojis = [];
-
-  const matches = text.matchAll(emojiRegexp);
-  for (const match of matches) {
-    foundEmojis.push(match[1]);
-  }
-
-  return foundEmojis;
+function cleanupEmojiText(text: string) {
+  return text.replaceAll(emojiSuffixRegexp, "$1");
 }
 
 export function extractUserIdsInText(text: string): string[] {
