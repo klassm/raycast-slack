@@ -22,17 +22,22 @@ All data can be obtained when opening Slack in the browser, logging in and openi
 
 ## Obtaining the parameters
 
+### Token
+
 * Open Slack in your browser, log in
 * [Open the dev console](https://developer.chrome.com/docs/devtools/open/), then open the console tab
-* Execute the following snippets:
+* Execute the following snippet:
 
 ```
 # Get the tokens
 Object.values(JSON.parse(window.localStorage["localConfig_v2"]).teams).map(team => team.token).join(",")
-
-# Get the cookie
-document.cookie
 ```
 
-Copy the two values (without the quotes surrounding the output) and enter them to the respective fields in the Raycast extension options.
+### Cookie
+
+Getting the cookie is a bit more difficult, as `document.cookie` does not return the value we want - for whatever reason.
+Instead:
+* Open Slack in your browser, log in
+* [Open the dev console](https://developer.chrome.com/docs/devtools/open/), then open the network tab
+* Open some arbitrary request. When scrolling down to the request headers, there will be a key value pair with the name "Cookie". Copy the value. You are good to go!
 
