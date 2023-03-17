@@ -7,6 +7,16 @@
 * Open bookmarks of slack channels
 * Show unread messages directly in Raycast, mark them as read with just one command
 
+### Usage
+
+Say you want to search for you direct conversations with Max Mustermann in Slack. Just activate this plug-in via command
+or alias, press space and type in `Max Mustermann`. This will display all direct messages between you and Max in
+all of your workspaces.
+
+If you want to narrow down the results by workspace, e.g. you only want results in workspace 'Foo', then all you need to
+do is prepend a prefix of that space name to your search: `-fo Max M`. This will only display the relevant results from
+that workspace.
+
 ## Installation
 
 Clone this repository and run `npm install && npm run dev`
