@@ -23,10 +23,13 @@ export function useSearch() {
   const [loading, setLoading] = useState(false);
   const { mostUsed, add: addMostUsed } = useMostUsed();
 
+  const { teamPrefix, searchItem } = splitQueryIntoPrefixAndSearchItem(query);
+  const relevantTeams = filterTeams(teamPrefix, teams);
+
   useEffect(() => {
     if (query) {
       setLoading(true);
-      Promise.all(teams.map((team) => searchTeam({ cookie, token: team.token }, team, query)))
+      Promise.all(relevantTeams.map((team) => searchTeam({ cookie, token: team.token }, team, searchItem)))
         .then((results) => results.flat())
         .then(setSearchResults)
         .then(() => setLoading(false));
@@ -42,4 +45,19 @@ export function useSearch() {
     teams,
     addMostUsed,
   };
+}
+
+function splitQueryIntoPrefixAndSearchItem(query: string): { teamPrefix: string; searchItem: string } {
+  if (!query.startsWith("-")) {
+    return { teamPrefix: "", searchItem: query };
+  }
+
+  const teamPrefix = query.substring(1, query.indexOf(" ")).toLowerCase();
+  const searchItem = query.substring(1 + teamPrefix.length);
+
+  return { teamPrefix, searchItem };
+}
+
+function filterTeams(teamPrefix: string, teams: TeamInfo[]): TeamInfo[] {
+  return teams.filter((team) => team.name.toLowerCase().startsWith(teamPrefix));
 }
