@@ -1,66 +1,63 @@
 {
-  "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "slack",
-  "title": "Slack",
-  "description": "",
-  "icon": "icon.png",
-  "author": "klassm",
-  "license": "MIT",
-  "commands": [
-    {
-      "name": "searchSlack",
-      "title": "Search Slack",
-      "description": "Search Slack channels and users",
-      "mode": "view"
-    },
-    {
-      "name": "unreadSlackConversations",
-      "title": "Unread Slack conversations",
-      "description": "Show unread slack conversations",
-      "mode": "view"
-    }
-  ],
-  "preferences": [
-    {
-      "name": "tokens",
-      "type": "textfield",
-      "title": "Slack Tokens",
-      "required": true,
-      "default": "",
-      "description": "Slack tokens"
-    },
-    {
-      "name": "cookie",
-      "type": "textfield",
-      "title": "Slack Cookie",
-      "required": true,
-      "default": "",
-      "description": "Slack Cookie"
-    }
-  ],
-  "dependencies": {
-    "@raycast/api": "^1.39.3",
-    "dotenv": "^16.0.2",
-    "lodash": "^4.17.21",
-    "node-fetch": "^3.2.10",
-    "replace-special-characters": "^1.2.6",
-    "usehooks-ts": "^2.6.0"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.185",
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
-    "@typescript-eslint/parser": "^5.37.0",
-    "eslint": "^8.23.1",
-    "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.3"
-  },
-  "scripts": {
-    "build": "ray build -e dist",
-    "dev": "ray develop",
-    "fix-lint": "ray lint --fix",
-    "lint": "ray lint",
-    "publish": "ray publish"
-  }
+	"$schema": "https://www.raycast.com/schemas/extension.json",
+	"name": "slack",
+	"title": "Slack",
+	"description": "",
+	"icon": "icon.png",
+	"author": "klassm",
+	"license": "MIT",
+	"commands": [
+		{
+			"name": "searchSlack",
+			"title": "Search Slack",
+			"description": "Search Slack channels and users",
+			"mode": "view"
+		},
+		{
+			"name": "unreadSlackConversations",
+			"title": "Unread Slack conversations",
+			"description": "Show unread slack conversations",
+			"mode": "view"
+		}
+	],
+	"preferences": [
+		{
+			"name": "tokens",
+			"type": "textfield",
+			"title": "Slack Tokens",
+			"required": true,
+			"default": "",
+			"description": "Slack tokens"
+		},
+		{
+			"name": "cookie",
+			"type": "textfield",
+			"title": "Slack Cookie",
+			"required": true,
+			"default": "",
+			"description": "Slack Cookie"
+		}
+	],
+	"dependencies": {
+		"@raycast/api": "^1.100.2",
+		"dotenv": "^16.5.0",
+		"lodash": "^4.17.21",
+		"node-fetch": "^3.3.2",
+		"replace-special-characters": "^1.2.7",
+		"usehooks-ts": "^3.1.1"
+	},
+	"devDependencies": {
+		"@types/lodash": "^4.17.18",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.3",
+		"@biomejs/biome": "^2.0.2"
+	},
+	"scripts": {
+		"build": "ray build -e dist",
+		"dev": "ray develop",
+		"lint": "biome check .",
+		"format": "biome check . --write --unsafe && biome format . --write",
+		"postinstall": "chmod +x ./node_modules/@biomejs/cli-*/biome || true",
+		"publish": "ray publish"
+	}
 }

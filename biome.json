@@ -1,0 +1,18 @@
+{
+	"files": {
+		"includes": ["src/**/*.ts", "src/**/*.tsx", "**/*.md", "**/*.json"]
+	},
+	"linter": {
+		"rules": {
+			"nursery": {}
+		}
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	}
+}

@@ -1,13 +1,13 @@
 import { getPreferenceValues } from "@raycast/api";
-import { Config } from "../types/Config";
+import type { Config } from "../types/Config";
 
 export function useConfig(): { config: Config } {
-  const { tokens, cookie } = getPreferenceValues();
+	const { tokens, cookie } = getPreferenceValues();
 
-  return {
-    config: {
-      cookie,
-      tokens: tokens.split(","),
-    },
-  };
+	return {
+		config: {
+			cookie,
+			tokens: tokens.split(","),
+		},
+	};
 }

@@ -13,3 +13,4 @@ list_response.json
 .env
 
 slack-api.http
+.history

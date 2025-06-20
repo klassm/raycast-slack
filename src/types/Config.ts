@@ -1,4 +1,4 @@
 export interface Config {
-  tokens: string[];
-  cookie: string;
+	tokens: string[];
+	cookie: string;
 }

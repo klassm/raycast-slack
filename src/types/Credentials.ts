@@ -1,4 +1,4 @@
 export interface Credentials {
-  cookie: string;
-  token: string;
+	cookie: string;
+	token: string;
 }
