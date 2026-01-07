@@ -83,8 +83,8 @@ export async function clientCounts({
 	}
 
 	return {
-		ims: json.ims.map(mapEntry),
-		mpims: json.mpims.map(mapEntry),
-		channels: json.channels.map(mapEntry),
+		ims: json.ims.map(mapEntry).filter((it) => it.hasUnread),
+		mpims: json.mpims.map(mapEntry).filter((it) => it.hasUnread),
+		channels: json.channels.map(mapEntry).filter((it) => it.hasUnread),
 	};
 }

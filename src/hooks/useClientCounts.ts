@@ -2,13 +2,13 @@ import { compact, sortBy, uniq } from "lodash";
 import { useEffect, useState } from "react";
 import { useInterval } from "usehooks-ts";
 import { cachedConversations } from "../services/conversationCache";
+import { getCachedUsersPrefs, userPrefs } from "../slack/clientBoot";
 import { clientCounts, type UnreadEntry } from "../slack/clientCounts";
 import { loadConversationHistory } from "../slack/conversationHistory";
 import { isUserConversation } from "../slack/conversationInfo";
 import { conversationMark } from "../slack/conversationMark";
 import { loadIdentityCached } from "../slack/identity";
 import { loadCachedUsers } from "../slack/users";
-import { getCachedUsersPrefs } from "../slack/usersPrefs";
 import type { Credentials } from "../types/Credentials";
 import type { SlackEntry } from "../types/SlackEntry";
 import { userConversationToSlackEntry } from "../utils/userConversationToSlackEntry";
@@ -67,6 +67,7 @@ async function loadData(
 		clientCounts(credentials),
 		getCachedUsersPrefs(credentials, teamId),
 	]);
+	console.log("userPrefs", userPrefs);
 	const unreadEntries = [...counts.ims, ...counts.mpims, ...counts.channels]
 		.filter((it) => it.hasUnread)
 		.filter((it) => !usersPrefs.mutedChannels.includes(it.id));
